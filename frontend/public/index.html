@@ -1,0 +1,17 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<h2>Uploader</h2>
+<input type='file' id='f' multiple>
+<button onclick='u()'>Upload</button>
+<script>
+async function u(){
+ let f=document.getElementById('f').files;
+ let fd=new FormData();
+ for(let x of f){ fd.append('files', x); }
+ try{ await fetch('/upload',{method:'POST',body:fd}); alert('Uploaded'); }
+ catch(e){ alert('Upload failed'); }
+}
+</script>
+</body>
+</html>
