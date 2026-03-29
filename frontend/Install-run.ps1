@@ -4,6 +4,13 @@ $ErrorActionPreference = "Stop"
 $ProjectDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $BackendDir = "$ProjectDir\backend"
 $FrontendDir = "$ProjectDir\frontend\public"
+$UploadsDir = "$BackendDir\uploads"
+
+# Create backend uploads folder if it doesn't exist
+if (-not (Test-Path $UploadsDir)) {
+    Write-Host "[Backend] Creating uploads folder..."
+    New-Item -ItemType Directory -Path $UploadsDir
+}
 
 # Backend install
 Write-Host "`n[Backend] Installing dependencies..."
@@ -21,6 +28,7 @@ Write-Host "[Frontend] Starting local preview..."
 Start-Process powershell -ArgumentList "cd '$FrontendDir'; npm start" -WindowStyle Hidden
 Pop-Location
 
+# Open frontend in browser
 Start-Sleep -Seconds 2
 Start-Process "http://localhost:5001"
 Write-Host "`n[Done] Frontend opened in browser. Backend running on http://localhost:5000"
