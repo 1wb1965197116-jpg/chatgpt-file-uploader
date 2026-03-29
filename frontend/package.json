@@ -1,0 +1,15 @@
+{
+  "name": "chatgpt-file-uploader-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for ChatGPT File Uploader",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve -l 5001 ."
+  },
+  "dependencies": {
+    "serve": "^14.2.0"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}
