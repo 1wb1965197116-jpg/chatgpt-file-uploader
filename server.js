@@ -1,25 +1,21 @@
 import express from "express";
 import multer from "multer";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const app = express();
-const PORT = 5000;
-
-const upload = multer({ dest: path.join(__dirname, "uploads/") });
-
-// Serve frontend static files
-app.use(express.static(path.join(__dirname, "../frontend/public")));
-
-// Handle file uploads
-app.post("/upload", upload.array("files"), (req, res) => {
-  console.log("Files uploaded:", req.files);
-  res.send({ status: "ok", files: req.files.map(f => f.originalname) });
+import path from "node:path";
+import fs from "node:fs";
+import { fileURLToPath } from "node:url";
+const __dirname=path.dirname(fileURLToPath(import.meta.url));
+const app=express();
+const port=Number(process.env.PORT||10000);
+const uploadDir=path.join(__dirname,"uploads");
+fs.mkdirSync(uploadDir,{recursive:true});
+const upload=multer({dest:uploadDir,limits:{fileSize:50*1024*1024,files:10}});
+app.disable("x-powered-by");
+app.use(express.static(path.join(__dirname,"frontend/public")));
+app.get("/health",(_req,res)=>res.json({ok:true,app:"ChatGPT File Uploader"}));
+app.get("/",(_req,res)=>res.sendFile(path.join(__dirname,"frontend/public/index.html")));
+app.post("/upload",upload.array("files",10),(req,res)=>{
+  if(!req.files?.length)return res.status(400).json({error:"Select at least one file."});
+  return res.json({status:"ok",files:req.files.map(f=>({originalName:f.originalname,size:f.size,mimeType:f.mimetype,storedName:f.filename}))});
 });
-
-app.listen(PORT, () => {
-  console.log(`Backend running at http://localhost:${PORT}`);
-});
+app.use((err,_req,res,_next)=>{if(err instanceof multer.MulterError)return res.status(400).json({error:err.code==="LIMIT_FILE_SIZE"?"Each file must be 50 MB or smaller.":"Upload limit exceeded."});console.error(err.message);return res.status(500).json({error:"Upload failed."});});
+app.listen(port,"0.0.0.0",()=>console.log("File Uploader listening on "+port));
