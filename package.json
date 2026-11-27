@@ -1,15 +1,16 @@
 {
-  "name": "chatgpt-file-uploader-frontend",
+  "name": "chatgpt-file-uploader",
   "version": "1.0.0",
-  "description": "Frontend for ChatGPT File Uploader",
-  "main": "index.html",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "start": "serve -l 5001 ."
-  },
-  "dependencies": {
-    "serve": "^14.2.0"
+    "start": "node server.js"
   },
   "engines": {
-    "node": "20.x"
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1"
   }
 }
